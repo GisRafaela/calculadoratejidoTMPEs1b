@@ -1,0 +1,138 @@
+<html>
+
+<head>
+  </body>
+  <style>
+    /*CALCULADORA 14-TMPE 1b*/
+    /* Estilos del botón */
+    #abrir-calculadora {
+      padding: 10px 20px;
+      background-color: #b82e00;
+      color: black;/*color de letra del boton abrir*/
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Estilos del modal */
+    .modal {
+      display: none;
+      /* oculto por defecto */
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    /* Contenido del modal (tarjeta) */
+    .modal-content {
+      background-color: #b82e00;
+      border: 3px solid #601a03;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+      position: relative;
+    }
+
+    /* Botón de cerrar */
+    .cerrar-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #601a03;/*color oscuro*/
+      font-weight: bold;
+    }
+
+    /* Reusar estilos input y resultado */
+    #resultado-trbd p {
+      background-color: #b82e00;
+      border-left: 5px solid #601a03;/*color oscuro*/
+      padding: 8px 12px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+    }
+
+    input[type='number'] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border: 2px solid #b82e00;/*color oscuro*/
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+  </style>
+
+  <!-- Botón para abrir modal -->
+  <button id="abrir-calculadora">Abrir Calculadora 14 - TMPE</button>
+
+  <!-- Modal -->
+  <div id="modal-calculadora" class="modal">
+    <div class="modal-content">
+      <button class="cerrar-btn" aria-label="Cerrar">&times;</button>
+      <h3 style="color:#000000; text-align:center; margin-bottom:12px;">Calculadora Urbanística</h3>
+      <label for="m2-modal" style="color:#000000; font-weight:600;">Superficie del terreno (m²):</label>
+      <input id="m2-modal" type="number" min="0" placeholder="Ej: 700" oninput="calcularUrbanismoTRBD(this.value)" />
+      <div id="resultado-trbd" style="color:#000000; margin-top:18px; font-size:15px; line-height:1.5;"></div>
+    </div>
+  </div>
+  </body>
+  <script>
+    const abrirBtn = document.getElementById('abrir-calculadora');
+    const modal = document.getElementById('modal-calculadora');
+    const cerrarBtn = modal.querySelector('.cerrar-btn');
+    abrirBtn.addEventListener('click', () => {
+      modal.classList.add('active');
+      document.getElementById('m2-modal').value = '';
+      document.getElementById('resultado-trbd').innerHTML = '';
+    });
+    cerrarBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    function calcularUrbanismoTRBD(m2) {
+      m2 = parseFloat(m2);
+      if (isNaN(m2) || m2 <= 0) {
+        document.getElementById("resultado-trbd").innerHTML =
+          "<p>Ingrese una superficie válida.</p>";
+        return;
+      }
+      const FOS = 0.7;
+      const FOT = 4;
+      const PVEA = 0.8;/*porcenteja en decimal*/
+      const Nofos = 1;/*siempre 1*/
+      const superficieCubierta = m2 * FOS;
+      const superficieConstruible = m2 * FOT;
+      const superficieLibre = (Nofos - FOS) * m2 * PVEA;
+      const superficielibremin = m2 - superficieCubierta;
+      
+      document.getElementById("resultado-trbd").innerHTML = `
+      <p><strong>Necesario M² (FOS):</strong> ${superficieCubierta.toFixed(2)} m²</p>
+      <p><strong>Necesario M² (FOT):</strong> ${superficieConstruible.toFixed(2)} m²</p>
+      <p><strong>PVEA:</strong> ${superficieLibre.toFixed(2)} m²</p>
+      <p><strong>Sup. Libre Mínima:</strong> ${superficielibremin.toFixed(2)} m²</p>
+      <p><strong>TOLERANCIA +- 2.5</strong></p>
+    `;
+      
+    }
+  </script>
+
+</head>
+
+</html>
